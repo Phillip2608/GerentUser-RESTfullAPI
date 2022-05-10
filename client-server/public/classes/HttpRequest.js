@@ -1,7 +1,7 @@
 class HttpRequest{
 
     static get(url, params = {}){
-        return HttpRequest.request('GET', url, params);
+        return HttpRequest.request('GET', url);
     }
 
     static post(url, params = {}){
@@ -25,22 +25,26 @@ class HttpRequest{
             ajax.open(method.toUpperCase(), url);
 
             ajax.onerror = event =>{
-                reject(e);
+                reject(event);
             };
     
             ajax.onload = event => {
                 let obj = {};
+
                 try{
+                    console.log(ajax.responseText);
                     obj = JSON.parse(ajax.responseText);
-                }catch(e){
-                    reject(e);
-                    console.error(e);
+                }catch(event){
+                    reject(event);
+                    console.error(event);
                 }
                 resolve(obj);
 
             };
+
+            ajax.setRequestHeader('Content-Type', 'application/json');
     
-            ajax.send();
+            ajax.send(JSON.stringify(params));
 
         });
         

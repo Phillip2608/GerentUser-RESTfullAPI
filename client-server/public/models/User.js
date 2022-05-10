@@ -98,23 +98,17 @@ class User{
                 break;
 
                 default:
-                    this[name] = json[name];
+                    if (name.substring(0, 1) === '_') this[name] = json[name];
             }
 
            
         }
     }
 
-    static getUsersStorage(){
-        let users = [];
+    static getUsersStorage() {
 
-        if(localStorage.getItem("users")){
-            
-            users = JSON.parse(localStorage.getItem("users"));
+        return Fetch.get('/users');
 
-        }
-
-        return users;
     }
 
     getNewID(){
@@ -146,32 +140,40 @@ class User{
         localStorage.setItem("users", JSON.stringify(users));
     }
 
+    toJSON(){
+
+        let json = {};
+
+        Object.keys(this).forEach(key =>{
+
+            if(this[key] !== undefined) json[key] = this[key];
+
+        });
+
+        return json;
+
+    }
+
     save(){
 
-        let users = User.getUsersStorage();
+        return new Promise((resolve, reject) =>{
+            let promise;
+        
+            if(this.id){
+                promise = HttpRequest.put(`/users/${this.id}`, this.toJSON());
+            }else{
+                promise = HttpRequest.post('/users', this.toJSON());
+            }
 
-        if(this.id > 0){
+            promise.then(data =>{
+                this.loadFromJSON(data);
 
-            users.map(u=>{
-
-                if(u._id == this.id){
-
-                    Object.assign(u, this);
-
-                }
-
-                return u;
-
+                resolve(data);
+            }).catch(e=>{
+                reject(e);
             });
-            
-        }else{
-            this._id = this.getNewID();
-
-            users.push(this);
-            
-        }
-
-        localStorage.setItem("users", JSON.stringify(users));   
-
+        });
+        
+        
     }
 }

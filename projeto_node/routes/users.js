@@ -14,6 +14,7 @@ module.exports = (app) => {
             if(err){
                 app.utils.error.send(err, req, res);
             }else{
+                res.setHeader('Content-Type', 'application/json');
                 res.status(200).json(users);
             }
         });
