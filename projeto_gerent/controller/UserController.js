@@ -178,7 +178,7 @@ class UserController{
         ajax.open('GET', '/users');
 
         ajax.onload = event => {
-            let obj = { users : [] };
+            let obj = { users};
             try{
                 obj = JSON.parse(ajax.responseText);
             }catch(e){

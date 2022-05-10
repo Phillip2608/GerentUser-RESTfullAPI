@@ -185,8 +185,7 @@ class UserController{
                 console.error(e);
             }
             
-
-            obj.users.forEach(dataUser=>{
+            obj.forEach(dataUser=>{
                 let user = new User();
     
                 user.loadFromJSON(dataUser);
